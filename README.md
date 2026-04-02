@@ -18,6 +18,12 @@ Azure Services used:
 1. Storage Account
 1. Cosmos DB
 
+### Technology Stack
+
+- **Runtime**: .NET 10 (LTS) with Azure Functions isolated worker model
+- **Infrastructure**: Bicep (Infrastructure as Code)
+- **Deployment**: Azure Developer CLI (azd) or Azure CLI
+
 The client can be simulated using curl, or any other tool that can send HTTP request to APIM gateway.
 
 ## Benefits of this Architecture
@@ -42,11 +48,32 @@ Other potential extensions of this architecture are:
 
 ### Prerequisites
 
-1. Local bash shell with Azure CLI or [Azure Cloud Shell](https://ms.portal.azure.com/#cloudshell/)
-1. Azure Subscription. [Create one for free](https://azure.microsoft.com/en-us/free/).
+1. [Azure Developer CLI (azd)](https://aka.ms/azure-dev/install)
+1. [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli)
+1. [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
+1. Azure Subscription. [Create one for free](https://azure.microsoft.com/free/).
 1. Clone or fork of this repository.
 
-### Deploy
+### Deploy with Azure Developer CLI (Recommended)
+
+Login to Azure:
+
+```bash
+azd auth login
+```
+
+Deploy the infrastructure and application:
+
+```bash
+cd app-templates-integration-services
+azd up
+```
+
+You will be prompted for an environment name, Azure subscription, and location. The deployment will provision all resources and deploy the Function App.
+
+>**NOTE**: The APIM deployment can take over an hour to complete.
+
+### Deploy with Azure CLI (Alternative)
 
 Login to your Azure in your terminal.
 
@@ -65,7 +92,7 @@ Run the deployment. The deployment will create the resource group "rg-\<Name suf
 ```bash
 cd app-templates-integration-services
 
-az deployment sub create --name "<unique deployment name>" --location "<Your Chosen Location>" --template-file infra/main.bicep --parameters name="<Name suffix for resources>" publisherEmail="<Publisher Email for APIM>" publisherName="<Publisher Name for APIM>" 
+az deployment sub create --name "<unique deployment name>" --location "<Your Chosen Location>" --template-file infra/main.bicep --parameters name="<Name suffix for resources>" publisherEmail="<Publisher Email for APIM>" publisherName="<Publisher Name for APIM>"
 ```
 
 The following deployments will run:
@@ -79,12 +106,12 @@ The following deployments will run:
 1. Use Curl or another tool to send a request as shown below to the "demo-queue" created during deployment. Make sure to send in the API key in the header "Ocp-Apim-Subscription-Key".
 
     ```bash
-    curl -X POST https://<Your APIM Gateway URL>/sb-operations/demo-queue -H 'Ocp-Apim-Subscription-Key:<Your APIM Subscription Key>' -H 'Content-Type: application/json' -d '{ "date" : "2022-09-17", "id" : "1", "data" : "Sending data via APIM->Service Bus->Function->CosmosDB" }'
+    curl -X POST https://<Your APIM Gateway URL>/sb-operations/demo-queue -H 'Ocp-Apim-Subscription-Key:<Your APIM Subscription Key>' -H 'Content-Type: application/json' -d '{ "date" : "2026-04-02", "id" : "1", "data" : "Sending data via APIM->Service Bus->Function->CosmosDB" }'
     ```
     If using PowerShell use Invoke-WebRequest:
 
     ```
-    Invoke-WebRequest -Uri "https://<Your APIM Gateway URL>/sb-operations/demo-queue" -Headers @{'Ocp-Apim-Subscription-Key' = '<Your APIM Subscription Key>'; 'Content-Type' = 'application/json'} -Method 'POST' -Body '{ "date" : "2022-09-17", "id" : "1", "data" : "Sending data via APIM->Service Bus->Function->CosmosDB" }'
+    Invoke-WebRequest -Uri "https://<Your APIM Gateway URL>/sb-operations/demo-queue" -Headers @{'Ocp-Apim-Subscription-Key' = '<Your APIM Subscription Key>'; 'Content-Type' = 'application/json'} -Method 'POST' -Body '{ "date" : "2026-04-02", "id" : "1", "data" : "Sending data via APIM->Service Bus->Function->CosmosDB" }'
     ```
 
 1. Go to your deployment of Cosmos DB in Azure Portal, click on Data Explorer, select "demo-database" and the "demo-container”, click Items. Select the first item and view the content. It will match the data submitted to the APIM gateway in step 1.
@@ -93,6 +120,6 @@ The following deployments will run:
 
 ## Disclaimer
 
-The code and deployment biceps are for demonstration purposes only.
+The code and deployment Bicep templates are for demonstration purposes only.
 
 
