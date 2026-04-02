@@ -17,7 +17,7 @@ param publisherEmail string
 @minLength(1)
 param publisherName string
 
-resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
+resource rg 'Microsoft.Resources/resourceGroups@2024-03-01' = {
   name: 'rg-${name}'
   location: location
   tags: {
@@ -41,7 +41,7 @@ module servicebus './modules/service-bus.bicep' = {
   name: '${rg.name}-servicebus'
   scope: rg
   params: {
-    nameSpace: 'sb-${toLower(name)}'
+    namespaceName: 'sb-${toLower(name)}'
     location: rg.location
   }
 }
@@ -70,7 +70,7 @@ module roleAssignmentAPIMSenderSB './modules/configure/roleAssign-apim-service-b
   scope: rg
   params: {
     apimServiceName: apim.outputs.apimServiceName
-    sbNameSpace: servicebus.outputs.sbNameSpace
+    sbNamespaceName: servicebus.outputs.sbNamespaceName
   }
   dependsOn: [
     apim
@@ -78,12 +78,12 @@ module roleAssignmentAPIMSenderSB './modules/configure/roleAssign-apim-service-b
   ]
 }
 
-module roleAssignmentFcuntionReceiverSB './modules/configure/roleAssign-function-service-bus.bicep' = {
+module roleAssignmentFunctionReceiverSB './modules/configure/roleAssign-function-service-bus.bicep' = {
   name: '${rg.name}-roleAssignmentFunctionSB'
   scope: rg
   params: {
     functionAppName: function.outputs.functionAppName
-    sbNameSpace: servicebus.outputs.sbNameSpace
+    sbNamespaceName: servicebus.outputs.sbNamespaceName
   }
   dependsOn: [
     function
@@ -91,7 +91,7 @@ module roleAssignmentFcuntionReceiverSB './modules/configure/roleAssign-function
   ]
 }
 
-module configurFunctionAppSettings './modules/configure/configure-function.bicep' = {
+module configureFunctionAppSettings './modules/configure/configure-function.bicep' = {
   name: '${rg.name}-configureFunction'
   scope: rg
   params: {
@@ -106,7 +106,7 @@ module configurFunctionAppSettings './modules/configure/configure-function.bicep
   ]
 }
 
-module configurAPIM './modules/configure/configure-apim.bicep' = {
+module configureAPIM './modules/configure/configure-apim.bicep' = {
   name: '${rg.name}-configureAPIM'
   scope: rg
   params: {
@@ -122,7 +122,7 @@ module configurAPIM './modules/configure/configure-apim.bicep' = {
 @description('Enable usage and telemetry feedback to Microsoft.')
 param enableTelemetry bool = true
 var telemetryId = '69ef933a-eff0-450b-8a46-331cf62e160f-apptemp-${location}'
-resource telemetrydeployment 'Microsoft.Resources/deployments@2021-04-01' = if (enableTelemetry) {
+resource telemetrydeployment 'Microsoft.Resources/deployments@2024-03-01' = if (enableTelemetry) {
   name: telemetryId
   location: location
   properties: {
@@ -135,4 +135,4 @@ resource telemetrydeployment 'Microsoft.Resources/deployments@2021-04-01' = if (
   }
 }
 
-output apimServideBusOperation string = '${apim.outputs.apimEndpoint}/sb-operations/'
+output apimServiceBusOperation string = '${apim.outputs.apimEndpoint}/sb-operations/'

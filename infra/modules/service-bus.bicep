@@ -1,5 +1,5 @@
 @description('The Service Bus Namespace')
-param nameSpace string = 'sb-${uniqueString(resourceGroup().id)}'
+param namespaceName string = 'sb-${uniqueString(resourceGroup().id)}'
 
 @description('Location for all resources.')
 param location string = resourceGroup().location
@@ -12,8 +12,8 @@ param location string = resourceGroup().location
 ])
 param sku string = 'Basic'
 
-resource serviceBusNamespace 'Microsoft.ServiceBus/namespaces@2021-11-01' = {
-  name: nameSpace
+resource serviceBusNamespace 'Microsoft.ServiceBus/namespaces@2022-10-01-preview' = {
+  name: namespaceName
   location: location
   sku: {
     capacity: 1
@@ -29,7 +29,7 @@ resource serviceBusNamespace 'Microsoft.ServiceBus/namespaces@2021-11-01' = {
 }
 
 
-resource sbQueues 'Microsoft.ServiceBus/namespaces/queues@2021-06-01-preview' = {
+resource sbQueue 'Microsoft.ServiceBus/namespaces/queues@2022-10-01-preview' = {
   name: 'demo-queue'
   parent: serviceBusNamespace
   properties: {
@@ -45,6 +45,6 @@ resource sbQueues 'Microsoft.ServiceBus/namespaces/queues@2021-06-01-preview' = 
   }
 }
 
-output sbNameSpace string = serviceBusNamespace.name
+output sbNamespaceName string = serviceBusNamespace.name
 output sbHostName string = '${serviceBusNamespace.name}.servicebus.windows.net'
 output sbEndpoint string = serviceBusNamespace.properties.serviceBusEndpoint 
