@@ -10,7 +10,7 @@ resource functionAppInstance 'Microsoft.Web/sites@2022-09-01' existing = {
 
 var functionId = functionAppInstance.identity.principalId
 
-resource sbInstance 'Microsoft.ServiceBus/namespaces@2022-10-01-preview' existing = {
+resource sbInstance 'Microsoft.ServiceBus/namespaces@2024-01-01' existing = {
   name: sbNamespaceName
 }
 

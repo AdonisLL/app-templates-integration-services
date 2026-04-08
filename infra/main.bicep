@@ -1,8 +1,8 @@
 targetScope = 'subscription'
 
-@minLength(1)
+@minLength(3)
 @maxLength(16)
-@description('Prefix for all resources, i.e. {name}storage')
+@description('Prefix for all resources (3–16 alphanumeric characters and hyphens). Used to construct all resource names, e.g. sb-{name}, apim-{name}.')
 param name string
 
 @minLength(1)
@@ -72,10 +72,6 @@ module roleAssignmentAPIMSenderSB './modules/configure/roleAssign-apim-service-b
     apimServiceName: apim.outputs.apimServiceName
     sbNamespaceName: servicebus.outputs.sbNamespaceName
   }
-  dependsOn: [
-    apim
-    servicebus
-  ]
 }
 
 module roleAssignmentFunctionReceiverSB './modules/configure/roleAssign-function-service-bus.bicep' = {
@@ -85,10 +81,6 @@ module roleAssignmentFunctionReceiverSB './modules/configure/roleAssign-function
     functionAppName: function.outputs.functionAppName
     sbNamespaceName: servicebus.outputs.sbNamespaceName
   }
-  dependsOn: [
-    function
-    servicebus
-  ]
 }
 
 module configureFunctionAppSettings './modules/configure/configure-function.bicep' = {
@@ -99,11 +91,6 @@ module configureFunctionAppSettings './modules/configure/configure-function.bice
     cosmosAccountName: cosmosdb.outputs.cosmosDBAccountName
     sbHostName: servicebus.outputs.sbHostName
   }
-  dependsOn: [
-    function
-    servicebus
-    cosmosdb
-  ]
 }
 
 module configureAPIM './modules/configure/configure-apim.bicep' = {
@@ -113,26 +100,18 @@ module configureAPIM './modules/configure/configure-apim.bicep' = {
     apimServiceName: apim.outputs.apimServiceName
     sbEndpoint: servicebus.outputs.sbEndpoint
   }
-  dependsOn: [
-    apim
-  ]
 }
 
-//  Telemetry Deployment
 @description('Enable usage and telemetry feedback to Microsoft.')
 param enableTelemetry bool = true
-var telemetryId = '69ef933a-eff0-450b-8a46-331cf62e160f-apptemp-${location}'
-resource telemetrydeployment 'Microsoft.Resources/deployments@2024-03-01' = if (enableTelemetry) {
-  name: telemetryId
-  location: location
-  properties: {
-    mode: 'Incremental'
-    template: {
-      '$schema': 'https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#'
-      contentVersion: '1.0.0.0'
-      resources: {}
-    }
+
+module telemetry './modules/telemetry.bicep' = {
+  name: 'telemetry'
+  params: {
+    enableTelemetry: enableTelemetry
+    location: location
   }
+  scope: rg
 }
 
 output apimServiceBusOperation string = '${apim.outputs.apimEndpoint}/sb-operations/'

@@ -10,7 +10,7 @@ resource apimInstance 'Microsoft.ApiManagement/service@2023-09-01-preview' exist
 
 var apimId = apimInstance.identity.principalId
 
-resource sbInstance 'Microsoft.ServiceBus/namespaces@2022-10-01-preview' existing = {
+resource sbInstance 'Microsoft.ServiceBus/namespaces@2024-01-01' existing = {
   name: sbNamespaceName
 }
 

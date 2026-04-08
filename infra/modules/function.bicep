@@ -1,4 +1,6 @@
-@description('The name of the function app that you wish to create.')
+@description('The name of the function app (2–60 alphanumeric characters and hyphens)')
+@minLength(2)
+@maxLength(60)
 param appName string = 'func-${uniqueString(resourceGroup().id)}'
 
 @description('Storage Account type')
@@ -97,7 +99,7 @@ resource functionApp 'Microsoft.Web/sites@2022-09-01' = {
       ]
       ftpsState: 'FtpsOnly'
       minTlsVersion: '1.2'
-      netFrameworkVersion: 'v10.0'
+      netFrameworkVersion: 'v8.0'
     }
     httpsOnly: true
   }

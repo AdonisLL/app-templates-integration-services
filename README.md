@@ -20,7 +20,7 @@ Azure Services used:
 
 ### Technology Stack
 
-- **Runtime**: .NET 10 (LTS) with Azure Functions isolated worker model
+- **Runtime**: .NET 8 (LTS) with Azure Functions isolated worker model
 - **Infrastructure**: Bicep (Infrastructure as Code)
 - **Deployment**: Azure Developer CLI (azd) or Azure CLI
 
@@ -50,7 +50,7 @@ Other potential extensions of this architecture are:
 
 1. [Azure Developer CLI (azd)](https://aka.ms/azure-dev/install)
 1. [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli)
-1. [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
+1. [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
 1. Azure Subscription. [Create one for free](https://azure.microsoft.com/free/).
 1. Clone or fork of this repository.
 
@@ -62,16 +62,39 @@ Login to Azure:
 azd auth login
 ```
 
-Deploy the infrastructure and application:
+Initialize and deploy from the repository directory:
 
 ```bash
 cd app-templates-integration-services
 azd up
 ```
 
-You will be prompted for an environment name, Azure subscription, and location. The deployment will provision all resources and deploy the Function App.
+During `azd up` you will be prompted for:
 
->**NOTE**: The APIM deployment can take over an hour to complete.
+| Prompt | Description |
+|--------|-------------|
+| Environment name | A short name used to prefix all Azure resources (1–16 characters, e.g. `myintegration`) |
+| Azure subscription | The subscription to deploy into |
+| Azure location | The region for all resources (defaults to `eastus` if not specified). Override at any time with `azd env set AZURE_LOCATION "<region>"` |
+| Publisher email | The email address for the API Management publisher |
+| Publisher name | The display name for the API Management publisher |
+
+The deployment provisions all infrastructure and deploys the Function App in a single step.
+
+> **NOTE**: The APIM resource can take over an hour to provision.
+
+To override the default location before deploying:
+
+```bash
+azd env set AZURE_LOCATION "westeurope"
+azd up
+```
+
+To re-deploy after code changes without re-provisioning infrastructure:
+
+```bash
+azd deploy
+```
 
 ### Deploy with Azure CLI (Alternative)
 

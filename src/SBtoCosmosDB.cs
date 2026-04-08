@@ -35,9 +35,8 @@ namespace SB_Integration_CosmosDB
                 JsonDocument.Parse(potentialJson);
                 return true;
             }
-            catch (JsonException ex)
+            catch (JsonException)
             {
-                _logger.LogError(ex, "JSON validation failed");
                 return false;
             }
         }

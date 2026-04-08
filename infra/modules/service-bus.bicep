@@ -1,4 +1,6 @@
-@description('The Service Bus Namespace')
+@description('The Service Bus Namespace name (6–50 alphanumeric characters and hyphens, must start with a letter)')
+@minLength(6)
+@maxLength(50)
 param namespaceName string = 'sb-${uniqueString(resourceGroup().id)}'
 
 @description('Location for all resources.')
@@ -10,9 +12,9 @@ param location string = resourceGroup().location
   'Standard'
   'Premium'
 ])
-param sku string = 'Basic'
+param sku string = 'Standard'
 
-resource serviceBusNamespace 'Microsoft.ServiceBus/namespaces@2022-10-01-preview' = {
+resource serviceBusNamespace 'Microsoft.ServiceBus/namespaces@2024-01-01' = {
   name: namespaceName
   location: location
   sku: {
@@ -29,7 +31,7 @@ resource serviceBusNamespace 'Microsoft.ServiceBus/namespaces@2022-10-01-preview
 }
 
 
-resource sbQueue 'Microsoft.ServiceBus/namespaces/queues@2022-10-01-preview' = {
+resource sbQueue 'Microsoft.ServiceBus/namespaces/queues@2024-01-01' = {
   name: 'demo-queue'
   parent: serviceBusNamespace
   properties: {

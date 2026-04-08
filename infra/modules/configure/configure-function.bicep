@@ -7,9 +7,6 @@ param cosmosAccountName string
 @description('The Service Bus Namespace Host Name')
 param sbHostName string
 
-param repositoryUrl string = 'https://github.com/fsaleemm/APIM-SB-ManagedIdentity.git'
-param branch string = 'main'
-
 resource functionAppInstance 'Microsoft.Web/sites@2022-09-01' existing = {
   name: functionAppName
 }
@@ -32,16 +29,4 @@ module configureFunctionAppSettings './append-function-appsettings.bicep' = {
     currentAppSettings: currentAppSettings
     customAppSettings: customAppSettings
   }
-}
-
-resource srcControls 'Microsoft.Web/sites/sourcecontrols@2022-09-01' = {
-  name: '${functionAppInstance.name}/web'
-  properties: {
-    repoUrl: repositoryUrl
-    branch: branch
-    isManualIntegration: true
-  }
-  dependsOn: [
-    configureFunctionAppSettings
-  ]
 }

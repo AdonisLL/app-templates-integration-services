@@ -1,4 +1,6 @@
-@description('Cosmos DB account name')
+@description('Cosmos DB account name (3–44 lowercase letters, numbers, and hyphens, must start with a lowercase letter)')
+@minLength(3)
+@maxLength(44)
 param accountName string = 'cosmos-${uniqueString(resourceGroup().id)}'
 
 @description('Location for the Cosmos DB account.')
