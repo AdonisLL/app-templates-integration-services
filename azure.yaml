@@ -1,0 +1,9 @@
+name: app-templates-integration-services
+metadata:
+  template: azd-init
+
+services:
+  function:
+    project: ./src
+    language: dotnet
+    host: function
