@@ -13,9 +13,11 @@ Azure Services used:
 
 1. API Management
 1. Service Bus
-1. Function App
+1. Function App (Elastic Premium plan with VNet integration)
 1. Application Insights (Function Execution)
-1. Storage Account
+1. Storage Account (secured with private endpoints)
+1. Virtual Network with subnets for Function App integration and private endpoints
+1. Private DNS Zones for storage services
 1. Cosmos DB
 
 ### Technology Stack
@@ -25,6 +27,15 @@ Azure Services used:
 - **Deployment**: Azure Developer CLI (azd) or Azure CLI
 
 The client can be simulated using curl, or any other tool that can send HTTP request to APIM gateway.
+
+## Network Security
+
+The Function App runs on an **Elastic Premium (EP1)** plan with full VNet integration:
+
+- The storage account has **public network access disabled** and **shared key access disabled**.
+- All storage communication (blob, queue, table, file) routes through **private endpoints** within the VNet.
+- The Function App uses **managed identity with RBAC** (Storage Blob Data Owner, Storage Queue Data Contributor, Storage Account Contributor, Storage File Data Privileged Contributor) instead of connection strings.
+- Content deployment over VNet is enabled via `WEBSITE_CONTENTOVERVNET`.
 
 ## Benefits of this Architecture
 

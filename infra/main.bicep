@@ -55,6 +55,15 @@ module cosmosdb './modules/cosmosdb.bicep' = {
   }
 }
 
+module vnet './modules/vnet.bicep' = {
+  name: '${rg.name}-vnet'
+  scope: rg
+  params: {
+    vnetName: 'vnet-${toLower(name)}'
+    location: rg.location
+  }
+}
+
 module function './modules/function.bicep' = {
   name: '${rg.name}-function'
   scope: rg
@@ -62,6 +71,8 @@ module function './modules/function.bicep' = {
     appName: 'func-${toLower(name)}'
     location: rg.location
     appInsightsLocation: rg.location
+    functionSubnetId: vnet.outputs.functionSubnetId
+    privateEndpointSubnetId: vnet.outputs.privateEndpointSubnetId
   }
 }
 
