@@ -9,7 +9,7 @@
             {
               "name": "CustomProperty1",
               "type": "string",
-              "value": "@{triggerOutputs()?['body'][0].userProperties.customProperty1}\n"
+              "value": "@{triggerOutputs()?['body'][0].userProperties.customProperty1}"
             }
           ]
         },
