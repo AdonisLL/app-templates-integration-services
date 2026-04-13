@@ -29,7 +29,7 @@ param runtime string = 'dotnet-isolated'
 param runtimeVersion string = '8.0'
 
 @description('Maximum instance count for Flex Consumption scaling.')
-@minValue(40)
+@minValue(1)
 @maxValue(1000)
 param maximumInstanceCount int = 100
 
