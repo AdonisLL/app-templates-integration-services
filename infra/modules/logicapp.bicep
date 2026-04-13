@@ -21,7 +21,7 @@ var logicAppName = appName
 var hostingPlanName = appName
 var applicationInsightsName = appName
 var storageAccountName = '${uniqueString(resourceGroup().id)}logicapp'
-var deploymentContainerName = 'app-package-${take(logicAppName, 32)}-${take(uniqueString(resourceGroup().id), 7)}'
+var deploymentContainerName = toLower('app-package-${take(logicAppName, 32)}-${take(uniqueString(resourceGroup().id), 7)}')
 
 // User-assigned identity for storage access (available before site creation)
 resource userAssignedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
