@@ -45,7 +45,7 @@ var hostingPlanName = appName
 var applicationInsightsName = appName
 var storageAccountName = '${uniqueString(resourceGroup().id)}azfunctions'
 var functionWorkerRuntime = runtime
-var deploymentStorageContainerName = 'app-package-${take(functionAppName, 32)}-${take(uniqueString(resourceGroup().id), 7)}'
+var deploymentStorageContainerName = toLower('app-package-${take(functionAppName, 32)}-${take(uniqueString(resourceGroup().id), 7)}')
 
 // User-assigned identity is required for Flex Consumption deployment storage auth
 resource userAssignedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
