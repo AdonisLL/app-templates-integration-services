@@ -7,3 +7,7 @@ services:
     project: ./src
     language: dotnet
     host: function
+  logicapp:
+    project: ./src/LogicApp
+    language: js
+    host: function

@@ -37,6 +37,9 @@ param maximumInstanceCount int = 100
 @allowed([2048, 4096])
 param instanceMemoryMB int = 2048
 
+@description('Principal ID of the deploying user, used for Storage Blob Data Contributor role assignment.')
+param deployerPrincipalId string = ''
+
 var functionAppName = appName
 var hostingPlanName = appName
 var applicationInsightsName = appName
@@ -194,6 +197,17 @@ resource roleAssignmentTableDataContributor 'Microsoft.Authorization/roleAssignm
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3')
     principalId: userAssignedIdentity.properties.principalId
     principalType: 'ServicePrincipal'
+  }
+}
+
+// Storage Blob Data Contributor for the deploying user – allows azd deploy to upload zip packages
+resource roleAssignmentDeployerBlobContributor 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (!empty(deployerPrincipalId)) {
+  name: guid(storageAccount.id, deployerPrincipalId, 'ba92f5b4-2d11-453d-a403-e96b0029c9fe')
+  scope: storageAccount
+  properties: {
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe')
+    principalId: deployerPrincipalId
+    principalType: 'User'
   }
 }
 

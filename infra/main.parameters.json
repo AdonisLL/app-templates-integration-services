@@ -13,6 +13,9 @@
     },
     "publisherName": {
       "value": "${AZURE_APIM_PUBLISHER_NAME}"
+    },
+    "principalId": {
+      "value": "${AZURE_PRINCIPAL_ID}"
     }
   }
 }

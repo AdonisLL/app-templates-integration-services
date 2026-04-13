@@ -63,6 +63,17 @@ module function './modules/function.bicep' = {
     appName: 'func-${toLower(name)}'
     location: rg.location
     appInsightsLocation: rg.location
+    deployerPrincipalId: principalId
+  }
+}
+
+module logicApp './modules/logicapp.bicep' = {
+  name: '${rg.name}-logicapp'
+  scope: rg
+  params: {
+    appName: 'logic-${toLower(name)}'
+    location: rg.location
+    appInsightsLocation: rg.location
   }
 }
 
@@ -84,6 +95,34 @@ module roleAssignmentFunctionReceiverSB './modules/configure/roleAssign-function
   }
 }
 
+module roleAssignmentLogicAppReceiverSB './modules/configure/roleAssign-logicapp-service-bus.bicep' = {
+  name: '${rg.name}-roleAssignmentLogicAppSB'
+  scope: rg
+  params: {
+    logicAppName: logicApp.outputs.logicAppName
+    sbNamespaceName: servicebus.outputs.sbNamespaceName
+  }
+}
+
+module roleAssignmentLogicAppCosmosDB './modules/configure/roleAssign-logicapp-cosmosdb.bicep' = {
+  name: '${rg.name}-roleAssignmentLogicAppCosmosDB'
+  scope: rg
+  params: {
+    logicAppName: logicApp.outputs.logicAppName
+    cosmosAccountName: cosmosdb.outputs.cosmosDBAccountName
+  }
+}
+
+module configureLogicAppSettings './modules/configure/configure-logicapp.bicep' = {
+  name: '${rg.name}-configureLogicApp'
+  scope: rg
+  params: {
+    logicAppName: logicApp.outputs.logicAppName
+    cosmosAccountName: cosmosdb.outputs.cosmosDBAccountName
+    sbHostName: servicebus.outputs.sbHostName
+  }
+}
+
 module configureFunctionAppSettings './modules/configure/configure-function.bicep' = {
   name: '${rg.name}-configureFunction'
   scope: rg
@@ -102,6 +141,9 @@ module configureAPIM './modules/configure/configure-apim.bicep' = {
     sbEndpoint: servicebus.outputs.sbEndpoint
   }
 }
+
+@description('Principal ID of the deploying user. Automatically populated by azd.')
+param principalId string = ''
 
 @description('Enable usage and telemetry feedback to Microsoft.')
 param enableTelemetry bool = true
